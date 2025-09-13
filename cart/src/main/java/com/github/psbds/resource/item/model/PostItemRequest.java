@@ -27,5 +27,6 @@ public class PostItemRequest {
     private Double price;
     
     @JsonProperty("metadata")
+    @NotNull(message = "Metadata is required")
     private List<PostItemMetadataRequest> metadata;
 }

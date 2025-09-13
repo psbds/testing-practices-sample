@@ -25,7 +25,8 @@ public class Item extends PanacheEntity {
     @OneToMany(mappedBy = "item")
     public List<ItemMetadata> metadata = new ArrayList<ItemMetadata>();
 
-    // Empty constructor required by JPA/Panache - protected to prevent accidental use
+    // Empty constructor required by JPA/Panache - protected to prevent accidental
+    // use
     protected Item() {
         super();
     }
@@ -39,10 +40,9 @@ public class Item extends PanacheEntity {
         if (quantity <= 0) {
             throw new BusinessException("INVALID_VALUE", "Quantity should be greater than zero");
         }
-        if (price <= 0) {
-            throw new BusinessException("INVALID_VALUE", "Price should be greater than zero");
+        if (price < 0) {
+            throw new BusinessException("INVALID_VALUE", "Price should not be negative");
         }
-
         this.userId = userId;
         this.productId = productId;
         this.price = price;
