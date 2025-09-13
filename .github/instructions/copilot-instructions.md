@@ -1,52 +1,74 @@
-**MANDATORY REQUIREMENT**: Every Java class in `src/main/java` MUST have a corresponding unit test file in the `src/test/java/unit` directory. GitHub Copilot should actively check for missing test files and suggest creating them.
+# GitHub Copilot Code Review Instructions
 
-**ENFORCEMENT**: When reviewing code changes or suggesting improvements for any Java file, always verify that a corresponding test file exists. If missing, immediately suggest creating the test file before any other changes.
+## Mandatory Requirements for Pull Request Reviews
 
-Ensure that all Java files have a corresponding unit test file in the `src/test/java/unit` directory that adheres to the following guidelines:
+When GitHub Copilot performs code reviews on pull requests, the following requirements MUST be enforced:
 
-1. **Naming Convention**: The test file should be named by appending `Test` to the original class name. For example, `MyClass.java` should have a test file named `MyClassTest.java`.
-2. **Unit Test File Path**: The test file should be located in the `src/test/java/unit` directory, mirroring the package structure of the source file.
-Example: If the source file is located at `src/main/java/com/example/MyClass.java`, the test file should be at `src/test/java/unit/com/example/MyClassTest.java`.
+### 1. **UNIT TEST COVERAGE VERIFICATION**
+- **REQUIREMENT**: Every Java class in `src/main/java` MUST have a corresponding unit test file in `src/test/java/unit`
+- **ACTION**: Before reviewing any other aspects of the code, immediately check for missing test files
+- **RESPONSE**: If test files are missing, flag this as the highest priority issue and suggest creating them
 
-## Annotation Testing Guidelines
+### 2. **TEST FILE NAMING AND LOCATION VALIDATION**
+- **REQUIREMENT**: Test files must follow strict naming conventions
+  - Test file name: `{ClassName}Test.java` (append `Test` to the original class name)
+  - Location: `src/test/java/unit/{package.structure}/{ClassName}Test.java`
+- **ACTION**: Verify that existing test files follow the correct naming pattern and location
+- **EXAMPLE**: `src/main/java/com/example/MyClass.java` → `src/test/java/unit/com/example/MyClassTest.java`
 
-3. **Annotation Null Checks**: When testing annotations on fields, methods, or classes, do NOT add null checks before accessing annotation properties. If an annotation is expected to be present, let the test fail with a NullPointerException if the annotation is missing - this indicates a real problem with the code under test.
+### 3. **ANNOTATION TESTING ENFORCEMENT**
+- **REQUIREMENT**: Do NOT suggest adding null checks before accessing annotation properties in tests
+- **RATIONALE**: NullPointerException indicates missing annotations and provides valuable diagnostic information
+- **CORRECT APPROACH**:
+  ```java
+  NotNull notNull = keyField.getAnnotation(NotNull.class);
+  assertEquals("Key is required", notNull.message(), 
+      "key field should have correct NotNull message");
+  ```
+- **AVOID SUGGESTING**:
+  ```java
+  NotNull notNull = keyField.getAnnotation(NotNull.class);
+  assertNotNull(notNull); // This check is redundant
+  ```
 
-   **Preferred approach:**
-   ```java
-   NotNull notNull = keyField.getAnnotation(NotNull.class);
-   assertEquals("Key is required", notNull.message(), 
-       "key field should have correct NotNull message");
-   ```
+### 4. **MISSING TEST FILE DETECTION**
+- **REQUIREMENT**: When reviewing any Java file in `src/main/java`, immediately verify test file existence
+- **MANDATORY ACTIONS**:
+  - Check if corresponding test file exists in `src/test/java/unit`
+  - If missing, flag as critical issue requiring immediate attention
+  - Provide exact file path where test should be created
+  - Offer to generate basic test template
+  - Do not proceed with other review comments until test coverage is addressed
 
-   **Avoid unnecessary null checks:**
-   ```java
-   // DON'T do this - let it throw NPE if annotation is missing
-   NotNull notNull = keyField.getAnnotation(NotNull.class);
-   assertNotNull(notNull); // This check is redundant
-   assertEquals("Key is required", notNull.message(), 
-       "key field should have correct NotNull message");
-   ```
+### 5. **NEW CLASS VALIDATION**
+- **REQUIREMENT**: Any new Java class added in a PR MUST be accompanied by its corresponding test file
+- **ACTION**: Flag new classes without tests as blocking issues
+- **RESPONSE**: Request test file creation before approving the PR
 
-   The NullPointerException serves as a clear indicator that the expected annotation is not present, which is valuable diagnostic information.
+### 6. **EXISTING CODEBASE COMPLIANCE**
+- **REQUIREMENT**: Flag existing classes that lack unit tests during reviews
+- **CURRENT VIOLATIONS** (these should be flagged when encountered):
+  - `BaseAuthenticatedResource.java` → missing `BaseAuthenticatedResourceTest.java`
+  - `ItemResource.java` → missing `ItemResourceTest.java`
+  - `CreateItemService.java` → missing `CreateItemServiceTest.java`
+  - `BusinessException.java` → missing `BusinessExceptionTest.java`
+  - `ItemFactory.java` → missing `ItemFactoryTest.java`
+  - All other classes in the main source tree without corresponding tests
 
-## Active Enforcement for GitHub Copilot
+### 7. **TEST COVERAGE IMPROVEMENT SUGGESTIONS**
+- **REQUIREMENT**: For classes that already have tests, suggest improvements to test coverage
+- **ACTION**: Identify untested methods, edge cases, or missing scenarios
+- **RESPONSE**: Provide specific suggestions for additional test cases
 
-4. **Missing Test File Detection**: When working with any Java file in `src/main/java`, GitHub Copilot must:
-   - Immediately check if the corresponding test file exists in `src/test/java/unit`
-   - If the test file is missing, suggest creating it as the first priority
-   - Provide the exact file path where the test should be created
-   - Offer to generate a basic test template
+### 8. **PRIORITY ORDER FOR REVIEW COMMENTS**
+When providing review feedback, follow this priority order:
+1. **CRITICAL**: Missing test files (highest priority)
+2. **HIGH**: Test quality and coverage issues
+3. **MEDIUM**: Code quality improvements
+4. **LOW**: Style and formatting suggestions
 
-5. **Code Review Requirements**: During code reviews, GitHub Copilot should:
-   - Flag any Java class that lacks a corresponding unit test
-   - Suggest test coverage improvements for existing classes
-   - Ensure new classes are accompanied by their test files
+## Enforcement Notes
 
-6. **Examples of Missing Test Files**: Based on the current codebase, the following classes are missing tests and should be flagged:
-   - `BaseAuthenticatedResource.java` → needs `BaseAuthenticatedResourceTest.java`
-   - `ItemResource.java` → needs `ItemResourceTest.java`
-   - `CreateItemService.java` → needs `CreateItemServiceTest.java`
-   - `BusinessException.java` → needs `BusinessExceptionTest.java`
-   - `ItemFactory.java` → needs `ItemFactoryTest.java`
-   - And all other classes in the main source tree
+- **BLOCKING ISSUES**: Missing test files should be treated as blocking issues that prevent PR approval
+- **CONSISTENCY**: Apply these requirements consistently across all Java files
+- **IMMEDIATE ACTION**: Address test coverage before any other code review activities
