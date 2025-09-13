@@ -1,14 +1,16 @@
 package com.github.psbds.data.repository;
 
 import com.github.psbds.domain.item.ItemMetadata;
-import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import java.util.List;
+import jakarta.inject.Inject;
 
 @ApplicationScoped
-public class ItemMetadataRepository implements PanacheRepository<ItemMetadata> {
+public class ItemMetadataRepository {
     
-    public List<ItemMetadata> findByItemId(Long itemId) {
-        return find("item.id", itemId).list();
+    @Inject
+    BaseRepository<ItemMetadata, Long> baseRepository;
+    
+    public void persist(Iterable<ItemMetadata> entities) {
+        baseRepository.persist(entities);
     }
 }

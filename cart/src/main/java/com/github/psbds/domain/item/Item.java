@@ -2,6 +2,7 @@ package com.github.psbds.domain.item;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,21 +10,25 @@ import java.util.List;
 import com.github.psbds.errors.BusinessException;
 
 @Entity
+@Getter
 public class Item extends PanacheEntity {
+
+    private Long id;
+
     @Column(name = "user_id", nullable = false)
-    public String userId;
+    private String userId;
 
     @Column(name = "product_id", nullable = false)
-    public Long productId;
+    private Long productId;
 
     @Column(name = "quantity", nullable = false)
-    public int quantity;
+    private int quantity;
 
     @Column(name = "price", nullable = false)
-    public Double price;
+    private Double price;
 
     @OneToMany(mappedBy = "item")
-    public List<ItemMetadata> metadata = new ArrayList<ItemMetadata>();
+    private List<ItemMetadata> metadata = new ArrayList<ItemMetadata>();
 
     // Empty constructor required by JPA/Panache - protected to prevent accidental
     // use

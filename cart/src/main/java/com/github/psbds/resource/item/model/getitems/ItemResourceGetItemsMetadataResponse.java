@@ -1,4 +1,4 @@
-package com.github.psbds.resource.item.model;
+package com.github.psbds.resource.item.model.getitems;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -10,8 +10,11 @@ import lombok.NoArgsConstructor;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostItemResponse {
+public class ItemResourceGetItemsMetadataResponse {
     
-    @JsonProperty("id")
-    private Long id;
+    @JsonProperty("key")
+    private String key;
+    
+    @JsonProperty("value")
+    private String value;
 }

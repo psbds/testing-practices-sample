@@ -1,6 +1,6 @@
-package unit.com.github.psbds.resource.item.model;
+package unit.com.github.psbds.resource.item.model.postitem;
 
-import com.github.psbds.resource.item.model.PostItemMetadataRequest;
+import com.github.psbds.resource.item.model.postitem.ItemResourcePostItemMetadataRequest;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -19,7 +19,7 @@ class PostItemMetadataRequestTest {
     @Test
     void testGettersAndSetters() {
         // Arrange
-        PostItemMetadataRequest request = new PostItemMetadataRequest();
+        ItemResourcePostItemMetadataRequest request = new ItemResourcePostItemMetadataRequest();
         
         // Act
         request.setKey(TEST_KEY);
@@ -35,7 +35,7 @@ class PostItemMetadataRequestTest {
     @Test
     void testKeyFieldAnnotations() throws NoSuchFieldException {
         // Arrange
-        Field keyField = PostItemMetadataRequest.class.getDeclaredField("key");
+        Field keyField = ItemResourcePostItemMetadataRequest.class.getDeclaredField("key");
         
         // Assert JsonProperty annotation
         JsonProperty jsonProperty = keyField.getAnnotation(JsonProperty.class);
@@ -64,7 +64,7 @@ class PostItemMetadataRequestTest {
     @Test
     void testValueFieldAnnotations() throws NoSuchFieldException {
         // Arrange
-        Field valueField = PostItemMetadataRequest.class.getDeclaredField("value");
+        Field valueField = ItemResourcePostItemMetadataRequest.class.getDeclaredField("value");
         
         // Assert JsonProperty annotation
         JsonProperty jsonProperty = valueField.getAnnotation(JsonProperty.class);

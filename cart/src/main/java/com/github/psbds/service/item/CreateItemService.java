@@ -3,8 +3,8 @@ package com.github.psbds.service.item;
 import com.github.psbds.data.repository.ItemMetadataRepository;
 import com.github.psbds.data.repository.ItemRepository;
 import com.github.psbds.factory.item.ItemFactory;
-import com.github.psbds.resource.item.model.PostItemRequest;
-import com.github.psbds.resource.item.model.PostItemResponse;
+import com.github.psbds.resource.item.model.postitem.ItemResourcePostItemRequest;
+import com.github.psbds.resource.item.model.postitem.ItemResourcePostItemResponse;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -25,13 +25,13 @@ public class CreateItemService {
         this.itemMetadataRepository = itemMetadataRepository;
     }
 
-    public PostItemResponse create(String userId, PostItemRequest request) {
+    public ItemResourcePostItemResponse create(String userId, ItemResourcePostItemRequest request) {
         var item = itemFactory.create(userId, request);
 
         this.itemRepository.persist(item);
 
-        this.itemMetadataRepository.persist(item.metadata);
+        this.itemMetadataRepository.persist(item.getMetadata());
 
-        return new PostItemResponse(item.id);
+        return new ItemResourcePostItemResponse(item.getId());
     }
 }

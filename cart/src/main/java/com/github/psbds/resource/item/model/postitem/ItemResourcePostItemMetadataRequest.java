@@ -1,4 +1,4 @@
-package com.github.psbds.resource.item.model;
+package com.github.psbds.resource.item.model.postitem;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Size;
 
 @Getter
 @Setter
-public class PostItemMetadataRequest {
+public class ItemResourcePostItemMetadataRequest {
     
     @JsonProperty("key")
     @NotNull(message = "Key is required")

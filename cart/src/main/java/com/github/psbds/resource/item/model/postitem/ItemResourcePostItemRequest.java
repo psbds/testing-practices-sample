@@ -1,4 +1,4 @@
-package com.github.psbds.resource.item.model;
+package com.github.psbds.resource.item.model.postitem;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -10,7 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class PostItemRequest {
+public class ItemResourcePostItemRequest {
     
     @JsonProperty("product_id")
     @NotNull(message = "Product ID is required")
@@ -28,5 +28,5 @@ public class PostItemRequest {
     
     @JsonProperty("metadata")
     @NotNull(message = "Metadata is required")
-    private List<PostItemMetadataRequest> metadata;
+    private List<ItemResourcePostItemMetadataRequest> metadata;
 }

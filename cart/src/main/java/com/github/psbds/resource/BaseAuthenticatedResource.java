@@ -4,10 +4,14 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import jakarta.inject.Inject;
 
-public class BaseAuthenticatedResource {
+public abstract class BaseAuthenticatedResource {
+
+    JsonWebToken jwt;
 
     @Inject
-    JsonWebToken jwt;
+    protected BaseAuthenticatedResource(JsonWebToken jwt) {
+        this.jwt = jwt;
+    }
 
     public String getUserId() {
         String userId = jwt.getSubject();
