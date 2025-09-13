@@ -1,0 +1,380 @@
+# Unit Test Creation Guidelines for Java/Quarkus Projects
+
+## Overview
+When creating unit tests, you MUST follow these patterns and guidelines to ensure consistency, maintainability, and quality across the codebase.
+
+## 📁 Project Structure
+
+### Test File Location
+- **REQUIREMENT**: Place all unit tests in `src/test/java/unit`
+- Follow the same package structure as the source code being tested
+
+## 🏗️ Test Structure and Patterns
+
+### 1. Arrange/Act/Assert Pattern
+**REQUIREMENT**: All test methods MUST follow the Arrange/Act/Assert pattern with explicit comments.
+
+```java
+@Test
+void testMessageConstructor() {
+    // Arrange
+    var customMessage = "Custom message";
+
+    // Act
+    InvalidRequestException ex = new InvalidRequestException(customMessage);
+
+    // Assert
+    assertEquals("Custom message", ex.getMessage());
+    assertNull(ex.getInnerException());
+}
+```
+
+### 2. Test Method Naming Convention
+**REQUIREMENT**: All test method names MUST follow the pattern: `<methodName>_when_<condition>_should_<expectedBehavior>()`
+
+This naming convention provides clear documentation of:
+- **What method** is being tested
+- **Under what conditions** the test runs
+- **What behavior** is expected
+
+**Examples:**
+```java
+@Test
+void userLogin_when_theCredentialsAreValid_should_returnTrue() {
+    // Test implementation
+}
+
+@Test
+void get_when_userExistsInTheDatabase_should_returnTheUser() {
+    // Test implementation
+}
+
+@Test
+void get_when_userDontExistsInTheDatabase_should_throwException() {
+    // Test implementation
+}
+
+@Test
+void create_when_validDataIsProvided_should_persistItemAndReturnId() {
+    // Test implementation
+}
+
+@Test
+void validate_when_emailFormatIsInvalid_should_throwValidationException() {
+    // Test implementation
+}
+```
+
+**For DTO tests, use simplified naming:**
+```java
+@Test
+void testAllArgsConstructor() {
+    // DTO constructor test
+}
+
+@Test
+void testGettersAndSetters() {
+    // DTO getter/setter test
+}
+
+@Test
+void testUserIdFieldAnnotations() {
+    // DTO annotation test for userId field
+}
+```
+
+### 3. Import Statements
+**REQUIREMENT**: Always use top-level imports instead of fully qualified names.
+
+❌ **AVOID:**
+```java
+java.lang.reflect.Field pubField;
+```
+
+✅ **CORRECT:**
+```java
+import java.lang.reflect.Field;
+
+Field pubField;
+```
+
+## 🔧 Quarkus Testing Framework
+
+### 4. Dependency Injection Testing
+**REQUIREMENT**: When testing classes that use `@Inject`, use `@QuarkusComponentTest`.
+
+```java
+@QuarkusComponentTest
+class BlocklistAPIWrapperTest {
+
+    @Inject
+    ClassToBeTested subject;
+
+    @InjectMock
+    Dependency dependency1;
+    
+    @InjectMock
+    Dependency dependency2;
+    
+    @Test
+    void yourTestMethod() {
+        // Test implementation
+    }
+}
+```
+
+### 5. Avoid Mockito Extensions
+**REQUIREMENT**: Do NOT use `@ExtendWith(MockitoExtension.class)` and `@Mock`. Instead, use:
+- `@QuarkusComponentTest`
+- `@Inject` 
+- `@InjectMock`
+
+## 📋 Class-Specific Testing Guidelines
+
+### 6. DTO Classes
+**REQUIREMENT**: For DTO classes, create these test cases:
+
+1. **Constructor Test**: Verify all-args constructor sets properties correctly (if constructor exists)
+2. **Getters and Setters Test**: Verify getter/setter functionality
+3. **Field Annotation Tests**: Verify that fields have the expected annotations with correct values
+
+**Do NOT** test Lombok annotations like `@Getter` and `@Setter`.
+
+#### Basic DTO Test Structure:
+```java
+class UpdateNotificationsDtoTest {
+
+    @Test
+    void testAllArgsConstructor() {
+        // Arrange
+        String userId = "12345678901";
+        Channel channel = Channel.EMAIL;
+
+        // Act
+        UpdateNotificationsDto dto = new UpdateNotificationsDto(userId, channel);
+
+        // Assert
+        assertEquals(userId, dto.getUserId(), 
+            "userId should be set correctly by constructor");
+        assertEquals(channel, dto.getChannel(), 
+            "channel should be set correctly by constructor");
+    }
+
+    @Test
+    void testGettersAndSetters() {
+        // Arrange
+        UpdateNotificationsDto dto = new UpdateNotificationsDto("initialUserId", Channel.EMAIL);
+        String newUserId = "98765432109";
+        Channel newChannel = Channel.SMS;
+
+        // Act
+        dto.setUserId(newUserId);
+        dto.setChannel(newChannel);
+
+        // Assert
+        assertEquals(newUserId, dto.getUserId(), 
+            "getUserId should return the value set by setUserId");
+        assertEquals(newChannel, dto.getChannel(), 
+            "getChannel should return the value set by setChannel");
+    }
+}
+```
+
+**IMPORTANT**: Do NOT create additional getter/setter tests like `testGettersAndSettersWithDifferentValues()`. The single `testGettersAndSetters()` method already validates the complete getter/setter functionality by setting and retrieving values. Additional tests that only change the values being set are redundant and add no value.
+
+#### Field Annotation Validation Tests:
+**REQUIREMENT**: Create annotation tests ONLY for annotations that are actually present on the fields.
+
+**Test these annotations when present:**
+- `@JsonProperty` - Verify the JSON property name
+- `@NotNull` - Verify the annotation exists with correct message
+- `@NotBlank` - Verify the annotation exists with correct message  
+- `@NotEmpty` - Verify the annotation exists with correct message
+- `@Size` - Verify min/max values and message
+- `@Pattern` - Verify regex pattern and message
+- `@Email` - Verify the annotation exists
+- `@Min` / `@Max` - Verify the values and messages
+- Custom validation annotations
+
+**Example annotation tests:**
+```java
+@Test
+void testUserIdFieldAnnotations() throws NoSuchFieldException {
+    // Arrange
+    Field userIdField = UpdateNotificationsDto.class.getDeclaredField("userId");
+    
+    // Assert JsonProperty annotation
+    JsonProperty jsonProperty = userIdField.getAnnotation(JsonProperty.class);
+    assertNotNull(jsonProperty, "userId field should have @JsonProperty annotation");
+    assertEquals("user_id", jsonProperty.value(), 
+        "userId field should have correct JsonProperty value");
+    
+    // Assert NotNull annotation
+    NotNull notNull = userIdField.getAnnotation(NotNull.class);
+    assertEquals("User ID is required", notNull.message(), 
+        "userId field should have correct NotNull message");
+    
+    // Assert Size annotation
+    Size size = userIdField.getAnnotation(Size.class);
+    assertEquals(1, size.min(), "userId field should have correct Size min value");
+    assertEquals(50, size.max(), "userId field should have correct Size max value");
+    assertEquals("User ID must be between 1 and 50 characters", size.message(), 
+        "userId field should have correct Size message");
+}
+
+@Test
+void testChannelFieldAnnotations() throws NoSuchFieldException {
+    // Arrange
+    Field channelField = UpdateNotificationsDto.class.getDeclaredField("channel");
+    
+    // Assert JsonProperty annotation
+    JsonProperty jsonProperty = channelField.getAnnotation(JsonProperty.class);
+    assertNotNull(jsonProperty, "channel field should have @JsonProperty annotation");
+    assertEquals("notification_channel", jsonProperty.value(), 
+        "channel field should have correct JsonProperty value");
+    
+    // Assert NotNull annotation
+    NotNull notNull = channelField.getAnnotation(NotNull.class);
+    assertEquals("Channel is required", notNull.message(), 
+        "channel field should have correct NotNull message");
+}
+```
+
+**Required imports for annotation testing:**
+```java
+import java.lang.reflect.Field;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.*;
+```
+
+### 7. REST Client Interfaces (Exception Case)
+**ONLY** for interfaces annotated with `@RegisterRestClient`, create tests that verify:
+- Correct `@RegisterRestClient` annotation with proper configKey
+- Correct `@Path` annotation on class and methods
+- Correct HTTP method annotations (`@GET`, `@POST`, etc.)
+- Correct `@Consumes` and `@Produces` annotations
+
+## 🚫 What NOT to Test
+
+### 8. Avoid Low-Value Tests
+**REQUIREMENT**: Do NOT create tests for:
+- Method signatures or return types (compiler already validates)
+- Class structure verification
+- Annotation presence (except REST clients)
+
+❌ **AVOID these patterns:**
+```java
+@Test
+void createMethod_ShouldExistWithCorrectSignature() {
+    // This adds no value - compilation already verifies this
+}
+
+@Test
+void method_ShouldReturnCorrectType() {
+    // This adds no value - type safety is enforced by compiler
+}
+```
+
+### 9. Avoid Redundant Test Cases
+**REQUIREMENT**: Do NOT create multiple tests that verify the same behavior.
+
+❌ **AVOID redundant tests:**
+```java
+@Test
+void create_ShouldCallFactory() {
+    // ... only tests factory.create() is called
+}
+
+@Test  
+void create_ShouldCallRepository() {
+    // ... only tests repository.persist() is called
+}
+
+@Test
+void create_HappyPath() {
+    // ... tests both factory.create() AND repository.persist() calls plus return value
+}
+```
+
+✅ **CORRECT approach:**
+```java
+@Test
+void create_WithValidParameters_ShouldCreateAndPersist() {
+    // ... tests factory.create(), repository.persist(), and return value
+}
+
+@Test
+void create_WithNullInput_ShouldHandleGracefully() {
+    // ... tests edge case with different behavior
+}
+```
+
+## 🎭 Mocking Best Practices
+
+### 10. Prefer Mocks for Complex Objects
+**REQUIREMENT**: For complex DTOs or objects with many properties, use mocks instead of manual construction.
+
+✅ **PREFERRED:**
+```java
+@Test
+void create_WithValidDto_ShouldProcessCorrectly() {
+    // Arrange
+    ComplexDto mockDto = mock(ComplexDto.class);
+    NestedDto mockNestedDto = mock(NestedDto.class);
+    
+    // Only mock the methods actually called by the method under test
+    when(mockDto.getNestedObject()).thenReturn(mockNestedDto);
+    when(mockNestedDto.getRequiredValue()).thenReturn("expectedValue");
+    
+    // Act & Assert
+    // ... rest of test
+}
+```
+
+❌ **AVOID for complex objects:**
+```java
+ComplexDto dto = new ComplexDto();
+dto.setProperty1("value1");
+dto.setProperty2("value2");
+// ... setting 20+ properties
+```
+
+### 11. Mock Only What's Actually Called
+**REQUIREMENT**: Analyze the method under test and only mock methods that are actually invoked.
+
+**Process:**
+1. Examine the method under test to identify which methods are called on dependencies
+2. Only mock those specific methods
+3. Avoid setting up unused mock behaviors
+
+```java
+// If the method under test only calls getNestedObject() and getValue()
+private SomeDto createMockDto() {
+    SomeDto mockDto = mock(SomeDto.class);
+    NestedDto mockNestedDto = mock(NestedDto.class);
+    
+    // Only mock the methods actually called
+    when(mockDto.getNestedObject()).thenReturn(mockNestedDto);
+    when(mockNestedDto.getValue()).thenReturn("testValue");
+    
+    return mockDto;
+}
+```
+
+## 🧹 Code Quality
+
+### 12. Extract Constants for Repeated Strings
+**REQUIREMENT**: If a string is used more than 2 times in tests, extract it to a constant.
+
+```java
+private static final String EXPECTED_MESSAGE = "Custom error message";
+private static final String TEST_USER_ID = "12345678901";
+```
+
+## 📝 Annotation Testing
+
+### 13. Method Annotation Testing
+**REQUIREMENT**: If the methods being tested have business-critical annotations (not framework annotations like `@Getter`), create additional test cases to validate the annotations have the correct values.
+
+**Focus on:** Custom business annotations, validation annotations, security annotations
+**Skip:** Lombok annotations (`@Getter`, `@Setter`, etc.)
