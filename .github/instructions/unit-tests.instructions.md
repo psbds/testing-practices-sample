@@ -1,6 +1,11 @@
+```instructions
 ---
 applyTo: "**/*.java"
 ---
+
+**MANDATORY REQUIREMENT**: Every Java class in `src/main/java` MUST have a corresponding unit test file in the `src/test/java/unit` directory. GitHub Copilot should actively check for missing test files and suggest creating them.
+
+**ENFORCEMENT**: When reviewing code changes or suggesting improvements for any Java file, always verify that a corresponding test file exists. If missing, immediately suggest creating the test file before any other changes.
 
 Ensure that all Java files have a corresponding unit test file in the `src/test/java/unit` directory that adheres to the following guidelines:
 
@@ -29,3 +34,24 @@ Example: If the source file is located at `src/main/java/com/example/MyClass.jav
    ```
 
    The NullPointerException serves as a clear indicator that the expected annotation is not present, which is valuable diagnostic information.
+
+## Active Enforcement for GitHub Copilot
+
+4. **Missing Test File Detection**: When working with any Java file in `src/main/java`, GitHub Copilot must:
+   - Immediately check if the corresponding test file exists in `src/test/java/unit`
+   - If the test file is missing, suggest creating it as the first priority
+   - Provide the exact file path where the test should be created
+   - Offer to generate a basic test template
+
+5. **Code Review Requirements**: During code reviews, GitHub Copilot should:
+   - Flag any Java class that lacks a corresponding unit test
+   - Suggest test coverage improvements for existing classes
+   - Ensure new classes are accompanied by their test files
+
+6. **Examples of Missing Test Files**: Based on the current codebase, the following classes are missing tests and should be flagged:
+   - `BaseAuthenticatedResource.java` → needs `BaseAuthenticatedResourceTest.java`
+   - `ItemResource.java` → needs `ItemResourceTest.java`
+   - `CreateItemService.java` → needs `CreateItemServiceTest.java`
+   - `BusinessException.java` → needs `BusinessExceptionTest.java`
+   - `ItemFactory.java` → needs `ItemFactoryTest.java`
+   - And all other classes in the main source tree
