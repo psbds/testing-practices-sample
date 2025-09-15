@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -23,7 +24,7 @@ public class ItemResourceGetItemsItemResponse {
     private Integer quantity;
     
     @JsonProperty("price")
-    private Double price;
+    private BigDecimal price;
     
     @JsonProperty("metadata")
     private List<ItemResourceGetItemsMetadataResponse> metadata;

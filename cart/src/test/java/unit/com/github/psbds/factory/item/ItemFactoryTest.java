@@ -8,6 +8,7 @@ import io.quarkus.test.component.QuarkusComponentTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,7 +21,7 @@ class ItemFactoryTest {
     private static final String TEST_USER_ID = "test-user-123";
     private static final Long TEST_PRODUCT_ID = 12345L;
     private static final Integer TEST_QUANTITY = 5;
-    private static final Double TEST_PRICE = 99.99;
+    private static final BigDecimal TEST_PRICE = new BigDecimal(99.99);
 
     @Inject
     ItemFactory itemFactory;

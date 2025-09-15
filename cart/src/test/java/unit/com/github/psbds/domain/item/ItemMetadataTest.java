@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import com.github.psbds.domain.item.Item;
 import com.github.psbds.domain.item.ItemMetadata;
-import com.github.psbds.errors.BusinessException;
+import com.github.psbds.errors.exception.BusinessException;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

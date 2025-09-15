@@ -4,10 +4,11 @@ import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.psbds.errors.BusinessException;
+import com.github.psbds.errors.exception.BusinessException;
 
 @Entity
 @Getter
@@ -25,7 +26,7 @@ public class Item extends PanacheEntity {
     private int quantity;
 
     @Column(name = "price", nullable = false)
-    private Double price;
+    private BigDecimal price;
 
     @OneToMany(mappedBy = "item")
     private List<ItemMetadata> metadata = new ArrayList<ItemMetadata>();
@@ -36,7 +37,7 @@ public class Item extends PanacheEntity {
         super();
     }
 
-    public Item(String userId, Long productId, int quantity, Double price) {
+    public Item(String userId, Long productId, int quantity, BigDecimal price) {
         super();
 
         if (userId == null || userId.trim().isEmpty()) {
@@ -45,8 +46,8 @@ public class Item extends PanacheEntity {
         if (quantity <= 0) {
             throw new BusinessException("INVALID_VALUE", "Quantity should be greater than zero");
         }
-        if (price < 0) {
-            throw new BusinessException("INVALID_VALUE", "Price should not be negative");
+        if (price == null || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new BusinessException("INVALID_VALUE", "Price should not be null or negative");
         }
         this.userId = userId;
         this.productId = productId;

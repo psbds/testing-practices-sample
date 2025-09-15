@@ -6,6 +6,7 @@ import lombok.Setter;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -24,7 +25,7 @@ public class ItemResourcePostItemRequest {
     @JsonProperty("price")
     @NotNull(message = "Price is required")
     @PositiveOrZero(message = "Price must be positive or zero")
-    private Double price;
+    private BigDecimal price;
     
     @JsonProperty("metadata")
     @NotNull(message = "Metadata is required")

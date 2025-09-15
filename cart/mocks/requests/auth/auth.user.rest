@@ -4,19 +4,16 @@
 @client_id = keycloak-app
 @client_secret = keycloak-client-secret
 
+### ========================================
+### USER AUTHENTICATION
+### ========================================
+
 ### Get Token for Test User
 # @name testUserLogin
 POST http://{{keycloak_host}}/realms/{{realm}}/protocol/openid-connect/token
 Content-Type: application/x-www-form-urlencoded
 
 grant_type=password&client_id={{client_id}}&client_secret={{client_secret}}&username=testuser&password=testpassword&scope=openid profile email
-
-### Get Token for Admin User
-# @name adminLogin
-POST http://{{keycloak_host}}/realms/{{realm}}/protocol/openid-connect/token
-Content-Type: application/x-www-form-urlencoded
-
-grant_type=password&client_id={{client_id}}&client_secret={{client_secret}}&username=admin&password=admin&scope=openid profile email
 
 ### Refresh Token (uses refresh_token from previous login)
 # @name refreshToken
@@ -37,3 +34,19 @@ POST http://{{keycloak_host}}/realms/{{realm}}/protocol/openid-connect/logout
 Content-Type: application/x-www-form-urlencoded
 
 client_id={{client_id}}&client_secret={{client_secret}}&refresh_token={{testUserLogin.response.body.refresh_token}}
+
+### Example API Call Using User Token
+GET http://localhost:8080/api/items
+Authorization: Bearer {{testUserLogin.response.body.access_token}}
+Content-Type: application/json
+
+### Example User Profile Update
+PUT http://localhost:8080/api/user/profile
+Authorization: Bearer {{testUserLogin.response.body.access_token}}
+Content-Type: application/json
+
+{
+  "firstName": "Test Updated",
+  "lastName": "User Updated",
+  "email": "testuser@example.com"
+}

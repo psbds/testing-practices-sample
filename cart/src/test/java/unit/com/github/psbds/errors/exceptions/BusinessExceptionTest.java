@@ -1,6 +1,6 @@
-package unit.com.github.psbds.errors;
+package unit.com.github.psbds.errors.exceptions;
 
-import com.github.psbds.errors.BusinessException;
+import com.github.psbds.errors.exception.BusinessException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

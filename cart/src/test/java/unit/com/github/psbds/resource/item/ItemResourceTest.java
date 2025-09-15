@@ -13,13 +13,19 @@ import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.component.QuarkusComponentTest;
 import io.quarkus.test.InjectMock;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @QuarkusComponentTest
@@ -64,8 +70,8 @@ class ItemResourceTest {
     @Test
     void getItems_when_userHasItems_should_returnItemsList() {
         // Arrange
-        ItemResourceGetItemsItemResponse item1 = new ItemResourceGetItemsItemResponse(1L, 101L, 2, 29.99, Arrays.asList());
-        ItemResourceGetItemsItemResponse item2 = new ItemResourceGetItemsItemResponse(2L, 102L, 1, 49.99, Arrays.asList());
+        ItemResourceGetItemsItemResponse item1 = new ItemResourceGetItemsItemResponse(1L, 101L, 2, new BigDecimal(29.99), Arrays.asList());
+        ItemResourceGetItemsItemResponse item2 = new ItemResourceGetItemsItemResponse(2L, 102L, 1, new BigDecimal(49.99), Arrays.asList());
         List<ItemResourceGetItemsItemResponse> items = Arrays.asList(item1, item2);
         ItemResourceGetItemsResponse expectedResponse = new ItemResourceGetItemsResponse(items);
         
@@ -102,5 +108,49 @@ class ItemResourceTest {
         assertNotNull(result.getEntity(), "Response entity should not be null");
         assertEquals(0, result.getEntity().getItems().size(), 
             "Response should contain an empty list");
+    }
+
+    @Test
+    void createItem_should_haveCorrectSecurityAnnotations() throws NoSuchMethodException {
+        // Arrange
+        Method createItemMethod = ItemResource.class.getMethod("createItem", ItemResourcePostItemRequest.class);
+
+        // Act & Assert
+        assertTrue(createItemMethod.isAnnotationPresent(POST.class), 
+            "createItem method should have @POST annotation");
+        assertTrue(createItemMethod.isAnnotationPresent(RolesAllowed.class), 
+            "createItem method should have @RolesAllowed annotation");
+        
+        RolesAllowed rolesAllowed = createItemMethod.getAnnotation(RolesAllowed.class);
+        String[] allowedRoles = rolesAllowed.value();
+        
+        assertEquals(2, allowedRoles.length, 
+            "createItem should allow exactly 2 roles");
+        assertTrue(Arrays.asList(allowedRoles).contains("user"), 
+            "createItem should allow 'user' role");
+        assertTrue(Arrays.asList(allowedRoles).contains("admin"), 
+            "createItem should allow 'admin' role");
+    }
+
+    @Test
+    void getItems_should_haveCorrectSecurityAnnotations() throws NoSuchMethodException {
+        // Arrange
+        Method getItemsMethod = ItemResource.class.getMethod("getItems");
+
+        // Act & Assert
+        assertTrue(getItemsMethod.isAnnotationPresent(GET.class), 
+            "getItems method should have @GET annotation");
+        assertTrue(getItemsMethod.isAnnotationPresent(RolesAllowed.class), 
+            "getItems method should have @RolesAllowed annotation");
+        
+        RolesAllowed rolesAllowed = getItemsMethod.getAnnotation(RolesAllowed.class);
+        String[] allowedRoles = rolesAllowed.value();
+        
+        assertEquals(2, allowedRoles.length, 
+            "getItems should allow exactly 2 roles");
+        assertTrue(Arrays.asList(allowedRoles).contains("user"), 
+            "getItems should allow 'user' role");
+        assertTrue(Arrays.asList(allowedRoles).contains("admin"), 
+            "getItems should allow 'admin' role");
     }
 }

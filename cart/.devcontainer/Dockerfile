@@ -29,6 +29,13 @@ USER root
 # Install Python
 RUN apt-get install python3.9
 
+# Install Node.js and npm (if not already available)
+RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && \
+    apt-get install -y nodejs
+
+# Install Mockoon CLI
+RUN npm install -g @mockoon/cli
+
 # Set JVM options for better performance in containers
 ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+UseParallelGC"
 ENV MAVEN_OPTS="-Xmx2g -XX:+UseParallelGC -Djava.awt.headless=true"

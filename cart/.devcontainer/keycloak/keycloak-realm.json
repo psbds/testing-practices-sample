@@ -97,7 +97,8 @@
       "secret": "service-account-secret",
       "attributes": {
         "client.secret.creation.time": "1722844800"
-      }
+      },
+      "defaultRoles": []
     }
   ],
   "roles": {
@@ -112,5 +113,5 @@
       }
     ]
   },
-  "defaultRoles": ["user"]
+  "defaultRoles": []
 }

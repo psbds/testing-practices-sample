@@ -28,11 +28,11 @@ public class ListItemsService {
     }
 
     public ItemResourceGetItemsResponse listByUserId(String userId) {
+        // The UserId is an input
+        // The List of items returned by the repository is an input
         List<Item> items = itemRepository.findByUserId(userId);
 
-        List<ItemResourceGetItemsItemResponse> itemResponses = items.stream()
-                .map(getItemResponseMapper::map)
-                .collect(Collectors.toList());
+        List<ItemResourceGetItemsItemResponse> itemResponses = items.stream().map(getItemResponseMapper::map).collect(Collectors.toList());
 
         return new ItemResourceGetItemsResponse(itemResponses);
     }

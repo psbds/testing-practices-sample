@@ -9,6 +9,7 @@ import com.github.psbds.resource.item.model.getitems.ItemResourceGetItemsItemRes
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,8 +18,8 @@ class ItemResourceGetItemsResponseTest {
     @Test
     void constructor_when_allParametersProvided_should_createObjectSuccessfully() {
         // Arrange
-        ItemResourceGetItemsItemResponse item1 = new ItemResourceGetItemsItemResponse(1L, 101L, 2, 29.99, Arrays.asList());
-        ItemResourceGetItemsItemResponse item2 = new ItemResourceGetItemsItemResponse(2L, 102L, 1, 49.99, Arrays.asList());
+        ItemResourceGetItemsItemResponse item1 = new ItemResourceGetItemsItemResponse(1L, 101L, 2, new BigDecimal(29.99), Arrays.asList());
+        ItemResourceGetItemsItemResponse item2 = new ItemResourceGetItemsItemResponse(2L, 102L, 1, new BigDecimal(49.99), Arrays.asList());
         List<ItemResourceGetItemsItemResponse> items = Arrays.asList(item1, item2);
 
         // Act
@@ -41,7 +42,7 @@ class ItemResourceGetItemsResponseTest {
     void setter_when_itemsProvided_should_setItemsCorrectly() {
         // Arrange
         ItemResourceGetItemsResponse response = new ItemResourceGetItemsResponse();
-        ItemResourceGetItemsItemResponse item = new ItemResourceGetItemsItemResponse(1L, 101L, 2, 29.99, Arrays.asList());
+        ItemResourceGetItemsItemResponse item = new ItemResourceGetItemsItemResponse(1L, 101L, 2, new BigDecimal(29.99), Arrays.asList());
         List<ItemResourceGetItemsItemResponse> items = Arrays.asList(item);
 
         // Act

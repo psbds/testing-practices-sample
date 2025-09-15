@@ -25,7 +25,7 @@ Subcanal: 1
   "metadata": [
     {
       "key": "size",
-      "value": "m"
+      "value": "M"
     }
   ]
 }

@@ -11,6 +11,7 @@ import com.github.psbds.service.item.CreateItemService;
 import com.github.psbds.service.item.ListItemsService;
 
 import io.quarkus.security.Authenticated;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -39,6 +40,7 @@ public class ItemResource extends BaseAuthenticatedResource {
 
     @POST
     @Transactional
+    @RolesAllowed({"user", "admin"})
     public RestResponse<ItemResourcePostItemResponse> createItem(@Valid ItemResourcePostItemRequest request) {
         var userId = getUserId();
         var response = createItemService.create(userId, request);
@@ -47,6 +49,7 @@ public class ItemResource extends BaseAuthenticatedResource {
     }
 
     @GET
+    @RolesAllowed({"user", "admin"})
     public RestResponse<ItemResourceGetItemsResponse> getItems() {
         var userId = getUserId();
         var response = listItemsService.listByUserId(userId);

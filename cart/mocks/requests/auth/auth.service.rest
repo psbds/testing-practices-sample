@@ -1,0 +1,54 @@
+### Variables
+@keycloak_host = keycloak:8080
+@realm = keycloak
+@service_client_id = service-account-client
+@service_client_secret = service-account-secret
+
+### ========================================
+### SERVICE ACCOUNT AUTHENTICATION
+### ========================================
+
+### Get Service Account Token (Client Credentials Grant)
+# @name serviceAccountLogin
+POST http://{{keycloak_host}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials&client_id={{service_client_id}}&client_secret={{service_client_secret}}&scope=openid
+
+### Get Service Account Token Info
+# Uses the access token from service account login to get token details
+POST http://{{keycloak_host}}/realms/{{realm}}/protocol/openid-connect/token/introspect
+Content-Type: application/x-www-form-urlencoded
+Authorization: Bearer {{serviceAccountLogin.response.body.access_token}}
+
+token={{serviceAccountLogin.response.body.access_token}}&client_id={{service_client_id}}&client_secret={{service_client_secret}}
+
+### Get Service Account User Info
+# Service accounts have a corresponding service user in Keycloak
+GET http://{{keycloak_host}}/realms/{{realm}}/protocol/openid-connect/userinfo
+Authorization: Bearer {{serviceAccountLogin.response.body.access_token}}
+
+### Validate Service Account Token (Alternative introspection endpoint)
+POST http://{{keycloak_host}}/realms/{{realm}}/protocol/openid-connect/token/introspect
+Content-Type: application/x-www-form-urlencoded
+
+token={{serviceAccountLogin.response.body.access_token}}&client_id={{service_client_id}}&client_secret={{service_client_secret}}
+
+
+### DEBUG: Test Item API Access (Should be FORBIDDEN)
+POST http://localhost:8080/item
+Authorization: Bearer {{serviceAccountLogin.response.body.access_token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+  "product_id": 2001,
+  "quantity": 3,
+  "price": 10.0,
+  "metadata": [
+    {
+      "key": "size",
+      "value": "m"
+    }
+  ]
+}

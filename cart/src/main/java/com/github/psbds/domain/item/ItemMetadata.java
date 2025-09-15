@@ -1,6 +1,6 @@
 package com.github.psbds.domain.item;
 
-import com.github.psbds.errors.BusinessException;
+import com.github.psbds.errors.exception.BusinessException;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.*;

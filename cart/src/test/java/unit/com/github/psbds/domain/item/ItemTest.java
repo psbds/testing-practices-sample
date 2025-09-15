@@ -3,12 +3,13 @@ package unit.com.github.psbds.domain.item;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 
 import org.junit.jupiter.api.Test;
 
 import com.github.psbds.domain.item.Item;
 import com.github.psbds.domain.item.ItemMetadata;
-import com.github.psbds.errors.BusinessException;
+import com.github.psbds.errors.exception.BusinessException;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,7 +20,7 @@ class ItemTest {
     private static final String VALID_USER_ID = "user123";
     private static final Long VALID_PRODUCT_ID = 1L;
     private static final int VALID_QUANTITY = 5;
-    private static final Double VALID_PRICE = 99.99;
+    private static final BigDecimal VALID_PRICE = new BigDecimal("99.99");
     private static final String INVALID_VALUE_ERROR_CODE = "INVALID_VALUE";
 
     @Test
@@ -119,7 +120,7 @@ class ItemTest {
     @Test
     void constructor_when_priceIsNegative_should_throwBusinessException() {
         // Arrange
-        Double negativePrice = -0.01;
+        BigDecimal negativePrice = new BigDecimal("-0.01");
 
         // Act & Assert
         BusinessException exception = assertThrows(BusinessException.class, 
@@ -128,14 +129,30 @@ class ItemTest {
         
         assertEquals(INVALID_VALUE_ERROR_CODE, exception.getErrorCode(), 
             "Should have correct error code");
-        assertEquals("Price should not be negative", exception.getErrorMessage(), 
+        assertEquals("Price should not be null or negative", exception.getErrorMessage(), 
+            "Should have correct error message");
+    }
+
+    @Test
+    void constructor_when_priceIsNull_should_throwBusinessException() {
+        // Arrange
+        BigDecimal nullPrice = null;
+
+        // Act & Assert
+        BusinessException exception = assertThrows(BusinessException.class, 
+            () -> new Item(VALID_USER_ID, VALID_PRODUCT_ID, VALID_QUANTITY, nullPrice),
+            "Should throw BusinessException when price is null");
+        
+        assertEquals(INVALID_VALUE_ERROR_CODE, exception.getErrorCode(), 
+            "Should have correct error code");
+        assertEquals("Price should not be null or negative", exception.getErrorMessage(), 
             "Should have correct error message");
     }
 
     @Test
     void constructor_when_priceIsZero_should_createItemSuccessfully() {
         // Arrange
-        Double zeroPrice = 0.0;
+        BigDecimal zeroPrice = BigDecimal.ZERO;
 
         // Act
         Item item = new Item(VALID_USER_ID, VALID_PRODUCT_ID, VALID_QUANTITY, zeroPrice);

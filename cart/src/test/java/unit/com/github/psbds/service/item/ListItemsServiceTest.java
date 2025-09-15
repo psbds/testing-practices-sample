@@ -17,6 +17,7 @@ import io.quarkus.test.component.QuarkusComponentTest;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,8 +42,8 @@ class ListItemsServiceTest {
         Item item2 = mock(Item.class);
         List<Item> items = Arrays.asList(item1, item2);
         
-        ItemResourceGetItemsItemResponse response1 = new ItemResourceGetItemsItemResponse(1L, 101L, 2, 29.99, Arrays.asList());
-        ItemResourceGetItemsItemResponse response2 = new ItemResourceGetItemsItemResponse(2L, 102L, 1, 49.99, Arrays.asList());
+        ItemResourceGetItemsItemResponse response1 = new ItemResourceGetItemsItemResponse(1L, 101L, 2, new BigDecimal(29.99), Arrays.asList());
+        ItemResourceGetItemsItemResponse response2 = new ItemResourceGetItemsItemResponse(2L, 102L, 1, new BigDecimal(49.99), Arrays.asList());
         
         when(itemRepository.findByUserId(TEST_USER_ID)).thenReturn(items);
         when(getItemResponseMapper.map(item1)).thenReturn(response1);

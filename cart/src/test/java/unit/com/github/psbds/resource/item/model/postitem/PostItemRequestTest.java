@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import org.junit.jupiter.api.Test;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -18,7 +19,7 @@ class PostItemRequestTest {
 
     private static final Long TEST_PRODUCT_ID = 12345L;
     private static final Integer TEST_QUANTITY = 10;
-    private static final Double TEST_PRICE = 99.99;
+    private static final BigDecimal TEST_PRICE = new BigDecimal(99.99);
 
     @Test
     void testGettersAndSetters() {

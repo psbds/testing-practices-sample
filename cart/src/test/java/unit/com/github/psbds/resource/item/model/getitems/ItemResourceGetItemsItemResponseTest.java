@@ -9,6 +9,7 @@ import com.github.psbds.resource.item.model.getitems.ItemResourceGetItemsMetadat
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,7 +18,7 @@ class ItemResourceGetItemsItemResponseTest {
     private static final Long TEST_ID = 1L;
     private static final Long TEST_PRODUCT_ID = 101L;
     private static final Integer TEST_QUANTITY = 2;
-    private static final Double TEST_PRICE = 29.99;
+    private static final BigDecimal TEST_PRICE = new BigDecimal(29.99);
 
     @Test
     void constructor_when_allParametersProvided_should_createObjectSuccessfully() {
