@@ -41,10 +41,13 @@ class ListItemsServiceTest {
         Item item1 = mock(Item.class);
         Item item2 = mock(Item.class);
         List<Item> items = Arrays.asList(item1, item2);
-        
+
         ItemResourceGetItemsItemResponse response1 = new ItemResourceGetItemsItemResponse(1L, 101L, 2, new BigDecimal(29.99), Arrays.asList());
         ItemResourceGetItemsItemResponse response2 = new ItemResourceGetItemsItemResponse(2L, 102L, 1, new BigDecimal(49.99), Arrays.asList());
-        
+        // We could improve our tests by using mocks instead of real instances for the DTOs
+        // ItemResourceGetItemsItemResponse response1 = mock(ItemResourceGetItemsItemResponse.class);
+        // ItemResourceGetItemsItemResponse response2 = mock(ItemResourceGetItemsItemResponse.class);
+
         when(itemRepository.findByUserId(TEST_USER_ID)).thenReturn(items);
         when(getItemResponseMapper.map(item1)).thenReturn(response1);
         when(getItemResponseMapper.map(item2)).thenReturn(response2);
@@ -58,7 +61,7 @@ class ListItemsServiceTest {
         assertEquals(2, result.getItems().size(), "Should return 2 items");
         assertEquals(response1, result.getItems().get(0), "First item should match");
         assertEquals(response2, result.getItems().get(1), "Second item should match");
-        
+
         verify(itemRepository).findByUserId(TEST_USER_ID);
         verify(getItemResponseMapper).map(item1);
         verify(getItemResponseMapper).map(item2);
@@ -76,7 +79,7 @@ class ListItemsServiceTest {
         assertNotNull(result, "Result should not be null");
         assertNotNull(result.getItems(), "Items list should not be null");
         assertEquals(0, result.getItems().size(), "Should return empty list");
-        
+
         verify(itemRepository).findByUserId(TEST_USER_ID);
         verifyNoInteractions(getItemResponseMapper);
     }
@@ -90,7 +93,6 @@ class ListItemsServiceTest {
         ApplicationScoped annotation = serviceClass.getAnnotation(ApplicationScoped.class);
 
         // Assert
-        assertNotNull(annotation, 
-            "ListItemsService should have @ApplicationScoped annotation");
+        assertNotNull(annotation, "ListItemsService should have @ApplicationScoped annotation");
     }
 }
