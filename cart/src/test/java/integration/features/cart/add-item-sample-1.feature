@@ -6,8 +6,9 @@ Feature: Cart - Add Item
   Background:
     Given i'm a valid user
 
-  Scenario: Add product to cart when the the product exists and is available in stock
+  Scenario: Add a valid product to cart when the the product exists is available in stock
     Given the product is valid and available in stock
     When I add a valid product to the cart
-    Then the response should be sucessful
-   # Then the cart should contain product '1001' with quantity '3' and price '29.99'
+    Then the response should be successful
+    And the item should have been added to the cart
+    And the response should contain the item id

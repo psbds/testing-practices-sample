@@ -20,7 +20,7 @@ public class HttpResponseSteps {
             "Expected status code " + expected + " but got " + actual);
     }
 
-    @Then("the response should be sucessful")
+    @Then("the response should be successful")
     public void theResponseShouldBeSuccessful() {
         assertNotNull(context.getLastResponse(), "No response found in context");
         int expected = 200;
