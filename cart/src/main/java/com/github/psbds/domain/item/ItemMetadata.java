@@ -8,6 +8,7 @@ import lombok.Getter;
 
 @Entity
 @Getter
+@Table(name = "ItemMetadata")
 public class ItemMetadata extends PanacheEntity {
 
     private Long id;

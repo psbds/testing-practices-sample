@@ -1,5 +1,6 @@
 package com.github.psbds.data.repository;
 
+import com.github.psbds.data.repository.dao.ItemRepositoryDAO;
 import com.github.psbds.domain.item.Item;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -9,7 +10,7 @@ import java.util.List;
 public class ItemRepository {
 
     @Inject
-    BaseRepository<Item, Long> baseRepository;
+    ItemRepositoryDAO baseRepository;
 
     public void persist(Item entity) {
         baseRepository.persist(entity);

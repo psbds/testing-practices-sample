@@ -11,20 +11,8 @@ Content-Type: application/x-www-form-urlencoded
 
 grant_type=password&client_id={{client_id}}&client_secret={{client_secret}}&username=testuser&password=testpassword&scope=openid profile email
 
-### Case 1: Send Request to create a valid item
-POST http://localhost:8080/item
+### Case 1: Send Request to get all items
+GET http://localhost:8080/item
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{auth.response.body.access_token}}
-
-{
-  "product_id": 2001,
-  "quantity": 3,
-  "price": 50.0,
-  "metadata": [
-    {
-      "key": "size",
-      "value": "M"
-    }
-  ]
-}

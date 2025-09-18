@@ -12,6 +12,7 @@ import com.github.psbds.errors.exception.BusinessException;
 
 @Entity
 @Getter
+@Table(name = "Item")
 public class Item extends PanacheEntity {
 
     private Long id;

@@ -13,7 +13,7 @@
       "type": "http",
       "documentation": "",
       "method": "get",
-      "endpoint": "stock/product/:id",
+      "endpoint": "product/:id",
       "responses": [
         {
           "uuid": "b56faccf-1ea3-49f4-b02a-81ab78a6e13c",

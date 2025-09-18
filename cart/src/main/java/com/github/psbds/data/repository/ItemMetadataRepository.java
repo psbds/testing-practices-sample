@@ -1,5 +1,6 @@
 package com.github.psbds.data.repository;
 
+import com.github.psbds.data.repository.dao.ItemMetadataRepositoryDAO;
 import com.github.psbds.domain.item.ItemMetadata;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -8,7 +9,7 @@ import jakarta.inject.Inject;
 public class ItemMetadataRepository {
     
     @Inject
-    BaseRepository<ItemMetadata, Long> baseRepository;
+    ItemMetadataRepositoryDAO baseRepository;
     
     public void persist(Iterable<ItemMetadata> entities) {
         baseRepository.persist(entities);

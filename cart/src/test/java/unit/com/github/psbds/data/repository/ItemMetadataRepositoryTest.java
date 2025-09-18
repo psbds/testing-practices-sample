@@ -8,8 +8,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.github.psbds.data.repository.BaseRepository;
 import com.github.psbds.data.repository.ItemMetadataRepository;
+import com.github.psbds.data.repository.dao.ItemMetadataRepositoryDAO;
 import com.github.psbds.domain.item.ItemMetadata;
 
 import io.quarkus.test.InjectMock;
@@ -24,7 +24,7 @@ class ItemMetadataRepositoryTest {
     ItemMetadataRepository repository;
 
     @InjectMock
-    BaseRepository<ItemMetadata, Long> baseRepository;
+    ItemMetadataRepositoryDAO baseRepository;
 
     @Test
     void persist_when_entitiesProvided_should_delegateToBaseRepository() {

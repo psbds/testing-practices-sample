@@ -61,6 +61,10 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-rest-client-oidc-filter</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-rest-client-jackson</artifactId>
+        </dependency>
         <!-- Lombok dependency -->
         <dependency>
             <groupId>org.projectlombok</groupId>

@@ -6,6 +6,7 @@ import java.util.Map;
 import io.quarkiverse.cucumber.ScenarioScope;
 import lombok.Getter;
 import lombok.Setter;
+import io.restassured.response.Response;
 
 @ScenarioScope
 public class Context {
@@ -14,15 +15,12 @@ public class Context {
     @Setter
     private String currentUserId;
 
+    @Getter
+    @Setter
+    private Response lastResponse;
+
+
     private Map<String, Object> data = new HashMap<>();
-
-    public void put(String key, Object value) {
-        data.put(key, value);
-    }
-
-    public <T> T get(String key, Class<T> type) {
-        return type.cast(data.get(key));
-    }
 
     public void clear() {
         currentUserId = null;

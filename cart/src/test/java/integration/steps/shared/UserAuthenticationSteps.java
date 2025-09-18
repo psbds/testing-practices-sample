@@ -14,5 +14,8 @@ public class UserAuthenticationSteps {
     public void imTheUserWithId(String userId) {
         context.setCurrentUserId(userId);
     }
-
+    @Given("i'm a valid user")
+    public void imAValidUser() {
+        context.setCurrentUserId("valid-user-id");
+    }
 }

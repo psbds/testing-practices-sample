@@ -5,8 +5,8 @@ import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.Test;
 
-import com.github.psbds.data.repository.BaseRepository;
 import com.github.psbds.data.repository.ItemRepository;
+import com.github.psbds.data.repository.dao.ItemRepositoryDAO;
 import com.github.psbds.domain.item.Item;
 
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
@@ -27,7 +27,7 @@ class ItemRepositoryTest {
     ItemRepository repository;
 
     @InjectMock
-    BaseRepository<Item, Long> baseRepository;
+    ItemRepositoryDAO baseRepository;
 
     @Test
     void persist_when_entityProvided_should_delegateToBaseRepository() {
