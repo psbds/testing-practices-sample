@@ -9,7 +9,6 @@ import io.restassured.response.Response;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.psbds.backends.stock.StockAPIClient;
 import com.github.psbds.backends.stock.model.getproduct.StockAPIGetProductResponse;

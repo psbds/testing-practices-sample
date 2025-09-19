@@ -127,4 +127,20 @@ public class AddItemStepsSample2 {
         var singleItem = items.get(items.size() - 1); 
         assertEquals(singleItem.getId(), responseBody.getId(), "Response item ID should match the created item ID");
     }
+
+    @Then("the cart should not contain product {string}")
+    public void theCartShouldNotContainProduct(String productId) {
+        // Get the current user ID to query their items
+        String userId = context.getCurrentUserId();
+
+        // Query the database directly using ItemRepositoryDAO to check if product exists
+        var items = itemRepositoryDAO.find("userId = ?1 and productId = ?2", userId, Long.parseLong(productId)).list();
+
+        // Validate that the item does NOT exist in the database
+        assertTrue(items.isEmpty(),
+                "Product " + productId + " should NOT exist in the cart for user " + userId + 
+                ", but found " + items.size() + " item(s)");
+
+        Log.info("Successfully verified that product " + productId + " is NOT in the cart for user " + userId);
+    }
 }
