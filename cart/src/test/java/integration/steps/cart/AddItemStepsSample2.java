@@ -93,6 +93,32 @@ public class AddItemStepsSample2 {
                 " for user " + userId);
     }
 
+    @When("I add product {string} to cart without authentication with quantity {string} and price {string} and metadata {string} with value {string}")
+    public void iAddProductToCartWithoutAuthentication(String productId, String quantity, String price,
+            String metadataKey, String metadataValue) {
+        var request = new ItemResourcePostItemRequest();
+        request.setProductId(Long.parseLong(productId));
+        request.setQuantity(Integer.parseInt(quantity));
+        request.setPrice(new BigDecimal(price));
+
+        // Create metadata with the provided key-value pair
+        ItemResourcePostItemMetadataRequest metadata = new ItemResourcePostItemMetadataRequest();
+        metadata.setKey(metadataKey);
+        metadata.setValue(metadataValue);
+        request.setMetadata(Arrays.asList(metadata));
+
+        // Make request without authorization header
+        Response response = RestAssured.given()
+                .contentType("application/json")
+                .body(request)
+                .post("/item");
+
+        context.setLastResponse(response);
+
+        Log.info("Attempted to add product " + productId + " to cart without authentication with quantity=" + quantity +
+                ", price=" + price + ", metadata=" + metadataKey + ":" + metadataValue);
+    }
+
     @Then("the cart should contain product {string} with quantity {string} and price {string}")
     public void theCartShouldContainProductWithQuantityAndPrice(String productId, String expectedQuantity,
             String expectedPrice) {

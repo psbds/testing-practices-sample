@@ -12,3 +12,4 @@ Feature: Cart - Add Item
     Then the response should be successful
     And the item should have been added to the cart
     And the response should contain the item id
+

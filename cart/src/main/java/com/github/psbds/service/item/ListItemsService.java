@@ -6,6 +6,7 @@ import com.github.psbds.mapper.item.GetItemResponseMapper;
 import com.github.psbds.resource.item.model.getitems.ItemResourceGetItemsItemResponse;
 import com.github.psbds.resource.item.model.getitems.ItemResourceGetItemsResponse;
 
+import io.quarkus.cache.CacheResult;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.util.List;
@@ -27,6 +28,7 @@ public class ListItemsService {
         this.getItemResponseMapper = getItemResponseMapper;
     }
 
+    @CacheResult(cacheName = "user-items")
     public ItemResourceGetItemsResponse listByUserId(String userId) {
         // The UserId is an input
         // The List of items returned by the repository is an input

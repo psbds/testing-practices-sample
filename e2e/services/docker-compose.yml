@@ -1,0 +1,124 @@
+version: '3.8'
+
+services:
+
+  # Cross Services
+  otel-lgtm:
+    image: grafana/otel-lgtm
+
+    ports:
+      - 3000:3000
+    networks:
+      - e2e-network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: dev-file
+      KC_HTTP_ENABLED: true
+      KC_HOSTNAME_URL: http://keycloak:8080
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_STRICT_HTTPS: false
+    ports:
+      - "8888:8080"
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+      - ./auth-config.json:/opt/keycloak/data/import/keycloak-realm.json
+    command:
+      - start-dev
+      - --import-realm
+    networks:
+      - e2e-network
+
+  # Cart Application
+  cartapp:
+    build: 
+      context: ../../cart
+      dockerfile: ../cart/Dockerfile
+    env_file:
+        - cart-app.env
+    ports:
+      - "9001:8080"
+
+    networks:
+      - e2e-network
+
+  cart-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_USER: "sa"
+      MSSQL_SA_PASSWORD: "Develop@2025"
+    ports:
+      - "9002:1433"
+    volumes:
+      - stockdb_data:/var/opt/mssql
+      - ./scripts:/scripts
+    entrypoint: ["/scripts/init-db.sh"]
+    networks:
+      - e2e-network
+
+  cart-redis:
+    image: redis:7-alpine
+    ports:
+      - "9003:6379"
+    volumes:
+      - cartredis_data:/data
+    command: redis-server --appendonly yes --requirepass redis
+    environment:
+      - REDIS_PASSWORD=redis
+    networks:
+      - e2e-network
+
+  # Stock Application
+  stockapp:
+    build: 
+      context: ../../stock
+      dockerfile: ../stock/Dockerfile
+    env_file:
+        - stock-app.env
+    ports:
+      - "7001:8080"
+    networks:
+      - e2e-network
+
+  stock-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_USER: "sa"
+      MSSQL_SA_PASSWORD: "Develop@2025"
+    ports:
+      - "7002:1433"
+    volumes:
+      - stockdb_data:/var/opt/mssql
+      - ./scripts:/scripts
+    entrypoint: ["/scripts/init-db.sh"]
+    networks:
+      - e2e-network
+
+  stock-redis:
+    image: redis:7-alpine
+    ports:
+      - "7003:6379"
+    volumes:
+      - stockredis_data:/data
+    command: redis-server --appendonly yes --requirepass redis
+    environment:
+      - REDIS_PASSWORD=redis
+    networks:
+      - e2e-network
+
+networks:
+  e2e-network:
+    driver: bridge
+
+volumes:
+  grafana_storage: {}
+  keycloak_data: {}
+  cartdb_data: {}
+  stockdb_data: {}
+  cartredis_data: {}
+  stockredis_data: {}

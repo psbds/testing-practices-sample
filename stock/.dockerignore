@@ -1,0 +1,16 @@
+# Build artifacts and cache
+target/
+.git/
+.vscode/
+*.log
+*.tmp
+.DS_Store
+node_modules/
+.idea/
+*.iml
+.settings/
+.project
+.classpath
+
+# Keep source files, build scripts, and configs for multi-stage build
+# mvnw, mvnw.cmd, .mvn/, src/, pom.xml are needed for the build stage

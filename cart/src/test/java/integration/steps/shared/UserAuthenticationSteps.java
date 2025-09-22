@@ -18,4 +18,10 @@ public class UserAuthenticationSteps {
     public void imAValidUser() {
         context.setCurrentUserId("valid-user-id");
     }
+
+    @Given("I am not authenticated")
+    public void iAmNotAuthenticated() {
+        context.setCurrentUserId(null);
+        context.setUnauthenticated(true);
+    }
 }

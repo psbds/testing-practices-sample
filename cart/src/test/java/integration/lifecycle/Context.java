@@ -19,11 +19,16 @@ public class Context {
     @Setter
     private Response lastResponse;
 
+    @Getter
+    @Setter
+    private boolean unauthenticated = false;
+
 
     private Map<String, Object> data = new HashMap<>();
 
     public void clear() {
         currentUserId = null;
+        unauthenticated = false;
         data.clear();
     }
 }
