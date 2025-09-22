@@ -1,0 +1,61 @@
+### Variables
+@keycloak_host = keycloak:8080
+@realm = keycloak
+@client_id = keycloak-app
+@client_secret = keycloak-client-secret
+
+### ========================================
+### ADMIN AUTHENTICATION
+### ========================================
+
+### Get Token for Admin User
+# @name adminLogin
+POST http://{{keycloak_host}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{client_id}}&client_secret={{client_secret}}&username=admin&password=admin&scope=openid profile email
+
+### Refresh Admin Token (uses refresh_token from previous login)
+# @name adminRefreshToken
+POST http://{{keycloak_host}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=refresh_token&client_id={{client_id}}&client_secret={{client_secret}}&refresh_token={{adminLogin.response.body.refresh_token}}
+
+### Get Admin User Info
+GET http://{{keycloak_host}}/realms/{{realm}}/protocol/openid-connect/userinfo
+Authorization: Bearer {{adminLogin.response.body.access_token}}
+
+### Admin Logout
+POST http://{{keycloak_host}}/realms/{{realm}}/protocol/openid-connect/logout
+Content-Type: application/x-www-form-urlencoded
+
+client_id={{client_id}}&client_secret={{client_secret}}&refresh_token={{adminLogin.response.body.refresh_token}}
+
+### Example Admin API Calls
+
+### Get All Users (Admin only)
+GET http://localhost:8080/api/admin/users
+Authorization: Bearer {{adminLogin.response.body.access_token}}
+Content-Type: application/json
+
+### Get System Statistics (Admin only)
+GET http://localhost:8080/api/admin/stats
+Authorization: Bearer {{adminLogin.response.body.access_token}}
+Content-Type: application/json
+
+### Delete User (Admin only)
+DELETE http://localhost:8080/api/admin/users/testuser
+Authorization: Bearer {{adminLogin.response.body.access_token}}
+Content-Type: application/json
+
+### Update System Configuration (Admin only)
+PUT http://localhost:8080/api/admin/config
+Authorization: Bearer {{adminLogin.response.body.access_token}}
+Content-Type: application/json
+
+{
+  "maxItemsPerUser": 100,
+  "enableRegistration": true,
+  "maintenanceMode": false
+}

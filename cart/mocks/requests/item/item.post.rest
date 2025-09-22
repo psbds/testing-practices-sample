@@ -1,0 +1,30 @@
+### Variables
+@keycloak_host = keycloak:8080
+@realm = keycloak
+@client_id = keycloak-app
+@client_secret = keycloak-client-secret
+
+### Step 1: Get Token for Test User
+# @name auth
+POST http://{{keycloak_host}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{client_id}}&client_secret={{client_secret}}&username=testuser&password=testpassword&scope=openid profile email
+
+### Case 1: Send Request to create a valid item
+POST http://localhost:8080/item
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{auth.response.body.access_token}}
+
+{
+  "product_id": 2001,
+  "quantity": 3,
+  "price": 50.0,
+  "metadata": [
+    {
+      "key": "size",
+      "value": "M"
+    }
+  ]
+}
