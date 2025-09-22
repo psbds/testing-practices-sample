@@ -1,0 +1,73 @@
+### Variables
+@keycloak_host = keycloak:8080
+@realm = keycloak
+@client_id = keycloak-app
+@client_secret = keycloak-client-secret
+
+### Step 1: Get Token for Test User
+# @name auth
+POST http://{{keycloak_host}}/realms/{{realm}}/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&client_id={{client_id}}&client_secret={{client_secret}}&username=testuser&password=testpassword&scope=openid profile email
+
+### Case 1: Create a new product
+POST http://localhost:8080/product
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{auth.response.body.access_token}}
+
+{
+  "name": "Sample Product",
+  "stock": 100,
+  "price": 29.99,
+  "metadata": [
+    {
+      "name": "Color",
+      "values": ["Red", "Blue", "Green"]
+    },
+    {
+      "name": "Size",
+      "values": ["Small", "Medium", "Large"]
+    },
+    {
+      "name": "Material",
+      "values": ["Cotton"]
+    }
+  ]
+}
+
+### Case 2: Create a product with minimal data
+POST http://localhost:8080/product
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{auth.response.body.access_token}}
+
+{
+  "name": "Basic Product",
+  "stock": 50,
+  "price": 15.00,
+  "metadata": []
+}
+
+### Case 3: Create a product with single metadata values
+POST http://localhost:8080/product
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{auth.response.body.access_token}}
+
+{
+  "name": "Electronic Device",
+  "stock": 25,
+  "price": 199.99,
+  "metadata": [
+    {
+      "name": "Brand",
+      "values": ["TechCorp"]
+    },
+    {
+      "name": "Warranty",
+      "values": ["2 years"]
+    }
+  ]
+}

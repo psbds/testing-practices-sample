@@ -1,0 +1,75 @@
+version: '3.8'
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+        - .containerenv
+    volumes:
+      - ../..:/workspaces:cached
+    command: sleep infinity
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: '2'
+        reservations:
+          memory: 1G
+          cpus: '0.5'
+
+    networks:
+      - stock-network
+
+  otel-lgtm:
+    image: grafana/otel-lgtm
+
+    ports:
+      - 3000:3000
+    networks:
+      - stock-network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: dev-file
+      KC_HTTP_ENABLED: true
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_STRICT_HTTPS: false
+    ports:
+      - "4003:8080"
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+      - ./keycloak/keycloak-realm.json:/opt/keycloak/data/import/keycloak-realm.json
+    command:
+      - start-dev
+      - --import-realm
+    networks:
+      - stock-network
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_USER: "sa"
+      MSSQL_SA_PASSWORD: "Develop@2025"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserverdata:/var/opt/mssql
+      - ./scripts/init-db.sql:/scripts/init-db.sql
+      - ./scripts/init-db.sh:/scripts/init-db.sh
+    entrypoint: ["/scripts/init-db.sh"]
+    networks:
+      - stock-network
+
+networks:
+  stock-network:
+    driver: bridge
+
+volumes:
+  grafana_storage: {}
+  keycloak_data: {}
+  sqlserverdata: {}
